@@ -1,0 +1,160 @@
+\documentclass[11pt, a4paper, logo, copyright, nonumbering]{aura}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\hypersetup{
+    pdfborderstyle={/S/S/W 1},
+    linkbordercolor={0.4 0.7 1},
+}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{comment}
+\usepackage{fancyvrb}
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{subcaption}
+\usepackage{cancel}
+\usepackage{xspace}
+\usepackage{makecell}
+\usepackage{geometry}
+\usepackage{multirow}
+\usepackage{blindtext}
+\usepackage{multicol}
+\usepackage{hyperref}
+\usepackage{fontawesome5}
+\usepackage{natbib}
+
+
+\geometry{left=2cm, right=2cm}
+\usepackage{microtype}
+\lstset{
+    breaklines=true,
+    breakatwhitespace=true,
+    columns=flexible,
+    basicstyle=\ttfamily,
+    frame=single
+}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{CJKutf8}
+\setlength{\parindent}{0pt}
+\usepackage[colorinlistoftodos]{todonotes}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
+\newcommand{\eg}{\textit{e.g.}}
+\newcommand{\ie}{\textit{i.e.}}
+\newcommand{\ym}[1]{\textcolor{red}{YM: #1}}
+\newcommand{\gz}[1]{\textcolor{blue}{GZ: #1}}
+\newcommand{\djiang}[1]{[{\em{Daxin}: \textcolor{blue}{#1}}]}
+
+\newcommand{\ourmodel}{AURA\xspace}
+
+\usepackage[most]{tcolorbox}
+
+\newtcolorbox{MyBox}[1]{
+    colback=white,
+    colframe=black,
+    sharp corners,dougdd
+    breakable,
+    left=2mm,
+    right=2mm,
+    top=2mm,
+    bottom=2mm,
+    boxrule=0.1mm,
+    fontupper=\ttfamily\small
+}
+
+\definecolor{glm_bg}{RGB}{235, 245, 255}
+\definecolor{glm_text}{RGB}{0, 110, 220}
+\definecolor{header_gray}{RGB}{242, 242, 242}
+\definecolor{section_gray}{RGB}{230, 230, 230}
+\newcommand{\best}[1]{\textbf{#1}}
+\newcommand{\glmcell}[1]{\cellcolor{glm_bg}\textcolor{glm_text}{\textbf{#1}}}
+\newcommand{\na}{-}
+\newcommand{\off}[1]{\nobreak\textcolor{gray}{\tiny\,(\makebox[3.2em][l]{#1})}}
+\definecolor{neg}{HTML}{CB4335}
+\definecolor{pos}{HTML}{27AE60}
+\definecolor{delta_gray}{HTML}{6C8EBF}
+\definecolor{light_bg}{RGB}{235, 245, 255}
+
+\newcommand{\cell}[2]{
+    \renewcommand{\arraystretch}{0.9}
+    \begin{tabular}{@{}c@{}}
+        #1 \\[-2pt]
+        {\fontsize{6.5pt}{0}\selectfont\color{delta_gray}(#2)}
+    \end{tabular}
+}
+
+\newcommand{\base}[1]{
+    \renewcommand{\arraystretch}{0.9}
+    \begin{tabular}{@{}c@{}}
+        #1 \\[-2pt]
+        {\fontsize{6.5pt}{0}\selectfont\phantom{(0.00)}}
+    \end{tabular}
+}
+
+\newcommand{\lf}[1]{\textcolor[rgb]{.6,.0,.6}{#1}}
+
+\title{
+\vspace{0.4em}
+  \texorpdfstring{%
+    \begin{tabular}[c]{@{}c@{\hspace{1.2em}}c@{}}
+      \multirow{2}{*}[0.4em]{\includegraphics[height=3em]{img/logo/mascot2.png}} & 
+      AURA: Always-On Understanding and Real-Time \\ 
+      &Assistance via Video Streams
+    \end{tabular}%
+  }{AURA: Always-On Understanding and Real-Time Assistance via Video Streams}%
+}
+
+\newcommand{\HFicon}{\raisebox{-0.18em}{\includegraphics[height=1.1em]{img/logo/hf-logo.pdf}}}
+\newcommand{\GHicon}{\raisebox{-0.18em}{\includegraphics[height=1.1em]{img/logo/github-logo.pdf}}}
+
+\author{
+    \normalsize\vspace{-0.5\baselineskip}
+    {\normalfont\mdseries\small
+    Xudong Lu$^{2,*}$\hspace{1em} Yang Bo$^{1,*,\dagger}$\hspace{1em} Jinpeng Chen$^{1,*}$\hspace{1em} Shuhan Li$^{1,*}$\hspace{1em} Xintong Guo$^{1,*}$\hspace{1em} Huankang Guan$^{1,*}$\newline
+    Fang Liu$^{1}$\hspace{1em} Dunyuan Xu$^{1}$\hspace{1em} Peiwen Sun$^{2}$\hspace{1em} Heyang Sun$^{1}$\hspace{1em} Rui Liu$^{1,\ddagger}$\hspace{1em} Hongsheng Li$^{2,\ddagger}$}\\
+    \normalsize\vspace{-0.3\baselineskip}
+    {\normalfont\mdseries\small \text{$^1$Huawei Research\hspace{1.5em} $^2$CUHK MMLab}}\\
+    \normalsize\vspace{0.4\baselineskip}
+    {\normalfont\mdseries\footnotesize $^*$Equal Contribution \hspace{1.5em} $^\dagger$Project Lead \hspace{1.5em} $^\ddagger$Corresponding Authors}\\
+    \normalsize\vspace{\baselineskip}
+    \href{https://github.com/aurateam2026/AURA}{\GHicon\ \textbf{GitHub}}\hspace{1.5em}
+    \href{https://huggingface.co/aurateam/AURA}{\HFicon\ \textbf{HuggingFace}}
+}
+
+\begin{document}
+
+\input{src/0_abs}
+
+\maketitle
+
+
+\input{src/1_intro}
+\input{src/2_related}
+\input{src/3_context}
+\input{src/4_data}
+\input{src/5_train}
+\input{src/6_deploy}
+\input{src/7_experiment}
+\input{src/8_conclusion}
+
+
+\bibliographystyle{unsrt}
+{
+\linespread{0.75}\selectfont
+\bibliography{references_formated.bib}
+}
+
+
+\end{document}
+
+decehi chdndhcnecjis

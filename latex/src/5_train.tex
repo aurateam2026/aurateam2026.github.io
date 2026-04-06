@@ -1,0 +1,26 @@
+\section{Training and Inference Design}
+
+To better address the unique challenges of streaming video understanding, we design both an effective training objective and an efficient inference framework for AURA. Specifically, we introduce a loss that supports appropriate supervision selection and mitigates silent-turn bias in streaming interactions. We also develop a real-time inference framework that enables low-latency, long-horizon assistance over continuous video streams.
+
+\subsection{Silent-Speech Balanced Loss}\label{silent-speech_balanced_loss}
+
+Due to the sliding-window construction of the training data, a challenge arises in deciding which assistant messages should be supervised. Because each training sample is truncated by the windowing process, not every non-silent assistant message remains fully supported by the retained visual and history evidence. As described in Section~\ref{sec:strm_struc}, during data construction, we can guarantee only that the last non-silent assistant message in each sample is paired with the video window and contextual history anchored to its timestamp, and our quality verification in Section~\ref{sec:quality_verify} is also performed with respect to this target answer. Earlier responses may have been correct in the original full sequence, but after truncation, the remaining context evidence may no longer be sufficient to justify them. Directly using all the non-silent assistant messages as supervision targets would encourage the model to produce responses from incomplete evidence, thereby increasing the risk of hallucination. We therefore apply loss only to all silent assistant messages and the last non-silent assistant message in each training sample, while excluding earlier non-silent assistant messages.
+
+Another major challenge is the imbalance between silence and speaking. In streaming interactions, the assistant should remain silent at most timestamps and respond only when the video context or the user query truly calls for it. Consequently, in streaming training data, the special token \texttt{<|silent|>} appears much more frequently than non-silent assistant messages. Moreover, because we supervise only the last non-silent assistant message, this imbalance is further amplified in the supervision signal. If all assistant messages were optimized with a standard cross-entropy loss, the model could become overly biased toward predicting silence. To address this issue, we adopt a class-balancing strategy for assistant-side supervision. Let $N_{\text{silent}}$ denote the number of silent assistant messages in a training sample. We assign weight $1$ to target tokens from non-silent responses and down-weight target tokens from silent assistant messages by the inverse imbalance ratio, \ie, $w_{\text{silent}}=\frac{1}{N_{\text{silent}}}$, so that the two types of supervision contribute at a comparable scale. This strategy preserves the abundant silent supervision needed to learn when not to speak, while preventing it from dominating the optimization signal for informative assistant responses.
+
+Combining supervision selection and class reweighting, the final training objective is
+\begin{equation}
+\mathcal{L}
+=
+-\frac{1}{\sum_{t=1}^{T} m_t}
+\sum_{t=1}^{T}
+m_t\, w_t \log p_{\theta}(y_t \mid x, y_{<t}),
+\quad
+w_t=
+\begin{cases}
+\dfrac{1}{N_{\text{silent}}}, & y_t \text{ belongs to a silent message},\\[4pt]
+1, & \text{otherwise}.
+\end{cases}
+\end{equation}
+where $T$ is the total number of target tokens in the current training instance, $y_t$ is the target token at position $t$, and $x$ denotes the multimodal streaming input. Here $m_t \in \{0,1\}$ is a supervision mask: $m_t=1$ if $y_t$ belongs to a silent assistant message or to the last non-silent assistant message in the instance, and $m_t=0$ otherwise. 
+

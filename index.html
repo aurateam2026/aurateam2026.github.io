@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="title" content="AURA: Always-On Understanding and Real-Time Assistance via Video Streams">
+  <meta name="description" content="AURA is an end-to-end streaming visual interaction framework that enables a unified VideoLLM to continuously process video streams and support both real-time question answering and proactive responses.">
+  <meta name="keywords" content="Streaming Video, VideoLLM, Real-Time Assistance, Always-On Understanding, AURA, Video Understanding, Proactive QA">
+  <meta name="author" content="Xudong Lu, Yang Bo, Jinpeng Chen, Shuhan Li, Xintong Guo, Huankang Guan, Fang Liu, Dunyuan Xu, Peiwen Sun, Heyang Sun, Rui Liu, Hongsheng Li">
+
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="AURA">
+  <meta property="og:title" content="AURA: Always-On Understanding and Real-Time Assistance via Video Streams">
+  <meta property="og:description" content="AURA is an end-to-end streaming visual interaction framework enabling real-time video QA and proactive responses.">
+  <meta property="og:url" content="https://aurateam2026.github.io/">
+
+  <title>AURA: Always-On Understanding and Real-Time Assistance via Video Streams</title>
+
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link rel="apple-touch-icon" href="static/images/favicon.ico">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #0f4c81;
+      --primary-dark: #093561;
+      --accent: #1a7abf;
+      --bg-light: #f8fafc;
+      --bg-white: #ffffff;
+      --text-dark: #1e293b;
+      --text-mid: #475569;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --highlight-bg: #eef4fb;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text-dark);
+      background: var(--bg-white);
+      line-height: 1.7;
+    }
+
+    /* ── NAV ── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+    }
+    .site-nav .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 54px;
+    }
+    .site-nav .nav-brand {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      line-height: 0;
+    }
+    .site-nav .nav-brand img {
+      height: 32px;
+      width: auto;
+      display: block;
+    }
+    .site-nav .nav-links {
+      display: flex;
+      gap: 1.6rem;
+      list-style: none;
+      margin: 0; padding: 0;
+    }
+    .site-nav .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-mid);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .site-nav .nav-links a:hover { color: var(--primary); }
+
+    /* ── HERO ── */
+    .hero-section {
+      padding: 5rem 2rem 3.5rem;
+      text-align: center;
+      background: linear-gradient(160deg, #e8f2fb 0%, #f0f7ff 50%, #eaf4f7 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-title-wrap {
+      position: relative;
+      max-width: 920px;
+      margin: 0 auto 1.6rem;
+    }
+    .hero-mascot {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 100px;
+      pointer-events: none;
+    }
+    .hero-section h1 {
+      font-size: 2.05rem;
+      font-weight: 800;
+      line-height: 1.25;
+      color: var(--text-dark);
+      margin: 0;
+      text-align: center;
+    }
+
+    /* Authors */
+    .author-list {
+      font-size: 1rem;
+      color: var(--text-mid);
+      margin-bottom: 0.6rem;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .author-list a {
+      color: var(--text-dark);
+      font-weight: 500;
+      text-decoration: none;
+    }
+    .author-list a:hover { color: var(--primary); text-decoration: underline; }
+    .author-list sup { color: var(--primary); font-weight: 600; font-size: 0.7em; }
+
+    .affiliation-line {
+      font-size: 0.9rem;
+      color: var(--text-mid);
+      margin-bottom: 0.3rem;
+    }
+    .affiliation-line sup { color: var(--primary); font-weight: 600; }
+
+    .contrib-note {
+      font-size: 0.82rem;
+      color: var(--text-light);
+      margin-bottom: 2rem;
+    }
+
+    /* Link buttons */
+    .link-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-top: 2rem;
+    }
+    .link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.3rem;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+    }
+    .link-btn.btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .link-btn.btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+    .link-btn.btn-outline {
+      background: #fff;
+      color: var(--text-dark);
+      border-color: var(--border);
+    }
+    .link-btn.btn-outline:hover { border-color: var(--primary); color: var(--primary); background: var(--highlight-bg); }
+    .link-btn i { font-size: 1.05em; }
+
+    /* ── SECTIONS ── */
+    .content-section {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+    .full-width-shaded {
+      background: var(--bg-light);
+    }
+    .section-title {
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.7rem;
+      border-bottom: 3px solid var(--primary);
+      display: inline-block;
+    }
+    .subsection-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin: 2.5rem 0 0.9rem;
+    }
+
+    /* Abstract */
+    .abstract-text {
+      font-size: 1.05rem;
+      color: var(--text-mid);
+      line-height: 1.8;
+    }
+    .abstract-text b { color: var(--text-dark); }
+
+    /* Figures */
+    .fig-container {
+      margin: 2rem 0;
+    }
+    .fig-embed {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      display: block;
+      object-fit: contain;
+    }
+    .fig-caption {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: var(--text-mid);
+      text-align: justify;
+      line-height: 1.6;
+    }
+    .fig-caption b { color: var(--text-dark); }
+
+    /* Highlights / stats row */
+    .highlights-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 1.5rem;
+      margin: 2.5rem 0;
+    }
+    .highlight-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .highlight-card .big-num {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.2;
+    }
+    .highlight-card .big-label {
+      font-size: 0.83rem;
+      color: var(--text-mid);
+      margin-top: 0.4rem;
+    }
+
+    /* Feature cards grid */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.4rem;
+      margin-top: 1.8rem;
+    }
+    .feature-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.4rem 1.5rem;
+      border-left: 4px solid var(--primary);
+    }
+    .feature-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+    .feature-card p {
+      font-size: 0.88rem;
+      color: var(--text-mid);
+      margin: 0;
+      line-height: 1.6;
+    }
+    .data-pipeline-steps {
+      grid-template-columns: 1fr;
+      margin-top: 1.2rem;
+    }
+    .data-pipeline-steps .feature-card {
+      position: relative;
+      padding-left: 4.3rem;
+    }
+    .data-pipeline-step-number {
+      position: absolute;
+      left: 1.35rem;
+      top: 1.3rem;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 999px;
+      background: var(--highlight-bg);
+      border: 1px solid #c9d9ee;
+      color: var(--primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.88rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    /* Contributions list */
+    .contrib-list {
+      list-style: none;
+      padding: 0;
+      margin: 1.2rem 0;
+    }
+    .contrib-list li {
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+      padding: 0.9rem 1.1rem;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 0.85rem;
+      font-size: 0.95rem;
+      color: var(--text-mid);
+    }
+    .contrib-list li .icon {
+      flex-shrink: 0;
+      width: 30px; height: 30px;
+      background: var(--highlight-bg);
+      color: var(--primary);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+    }
+    .contrib-list b { color: var(--text-dark); }
+
+    /* Demo section */
+    .demo-group-label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-mid);
+      margin: 2rem 0 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.8rem;
+      margin-bottom: 1.5rem;
+    }
+    .demo-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+    .demo-card video {
+      width: 100%;
+      display: block;
+      background: #000;
+      aspect-ratio: 3 / 5;
+      object-fit: contain;
+    }
+    .demo-label {
+      padding: 0.75rem 1rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      background: var(--bg-light);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* BibTeX */
+    .bibtex-wrap {
+      position: relative;
+      margin-top: 1rem;
+    }
+    .bibtex-code {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 1.4rem 1.6rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.83rem;
+      line-height: 1.6;
+      overflow-x: auto;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 10px; right: 12px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #e2e8f0;
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,0.2); }
+
+    /* Footer */
+    .site-footer {
+      background: #1e293b;
+      color: #94a3b8;
+      text-align: center;
+      padding: 2.5rem 2rem;
+      font-size: 0.85rem;
+      line-height: 1.8;
+    }
+    .site-footer a { color: #93c5fd; text-decoration: none; }
+    .site-footer a:hover { text-decoration: underline; }
+
+    /* Scroll-to-top */
+    #scroll-top {
+      position: fixed;
+      bottom: 2rem; right: 2rem;
+      width: 42px; height: 42px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(15,76,129,0.4);
+      transition: background 0.2s;
+      z-index: 200;
+    }
+    #scroll-top:hover { background: var(--primary-dark); }
+    #scroll-top.visible { display: flex; }
+
+    @media (max-width: 700px) {
+      .hero-section h1 { font-size: 1.5rem; }
+      .site-nav .nav-links { display: none; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .demo-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#" aria-label="AURA"><img src="static/images/aura_cha.png" alt="AURA"></a>
+    <ul class="nav-links">
+      <li><a href="#abstract">Abstract</a></li>
+      <li><a href="#method">Method</a></li>
+      <li><a href="#demo">Demo</a></li>
+      <li><a href="#bibtex">BibTeX</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section class="hero-section">
+  <div class="hero-title-wrap">
+    <img src="static/images/mascot2.png" alt="AURA mascot" class="hero-mascot">
+    <h1>
+      AURA: Always-On Understanding and<br>Real-Time Assistance via Video Streams
+    </h1>
+  </div>
+
+  <div class="author-list">
+    Xudong Lu<sup>2*</sup>,&nbsp;
+    Yang Bo<sup>1*†</sup>,&nbsp;
+    Jinpeng Chen<sup>1*</sup>,&nbsp;
+    Shuhan Li<sup>1*</sup>,&nbsp;
+    Xintong Guo<sup>1*</sup>,&nbsp;
+    Huankang Guan<sup>1*</sup>,<br>
+    Fang Liu<sup>1</sup>,&nbsp;
+    Dunyuan Xu<sup>1</sup>,&nbsp;
+    Peiwen Sun<sup>2</sup>,&nbsp;
+    Heyang Sun<sup>1</sup>,&nbsp;
+    Rui Liu<sup>1✉</sup>,&nbsp;
+    Hongsheng Li<sup>2✉</sup>
+  </div>
+
+  <div class="affiliation-line">
+    <sup>1</sup>Huawei Research&ensp;&ensp;<sup>2</sup>CUHK MMLab
+  </div>
+  <div class="contrib-note">
+    *Equal contribution &ensp;&nbsp;† Project Lead &ensp;&nbsp;✉ Corresponding author
+  </div>
+
+  <div class="link-buttons">
+    <a href="https://github.com/aurateam2026/AURA" target="_blank" class="link-btn btn-outline">
+      <i class="fab fa-github"></i> GitHub
+    </a>
+    <a href="https://huggingface.co/aurateam/AURA" target="_blank" class="link-btn btn-outline">
+      <i class="fas fa-robot"></i> Model
+    </a>
+  </div>
+</section>
+
+
+<!-- ─── ABSTRACT ─── -->
+<div class="full-width-shaded" id="abstract">
+  <div class="content-section">
+    <h2 class="section-title">Abstract</h2>
+    <p class="abstract-text">
+      Video Large Language Models (VideoLLMs) have achieved strong performance on many video understanding tasks,
+      but most existing systems remain offline and are not well-suited for live video streams that require
+      continuous observation and timely response. Recent streaming VideoLLMs have made progress, yet current
+      approaches often rely on decoupled trigger-response pipelines or are limited to captioning-style narration,
+      reducing their effectiveness for open-ended question answering and long-horizon interaction.
+      We propose <b>AURA</b> (<b>A</b>lways-On <b>U</b>nderstanding and <b>R</b>eal-Time <b>A</b>ssistance),
+      an end-to-end streaming visual interaction framework that enables a unified VideoLLM to continuously
+      process video streams and support both real-time question answering and proactive responses.
+      AURA integrates context management, data construction, training objectives, and deployment optimization
+      for stable long-horizon streaming interaction.
+      It achieves state-of-the-art performance on streaming benchmarks and supports a real-time demo system
+      with ASR and TTS running at <b>2 FPS on two 80G accelerators</b>.
+    </p>
+
+    <div class="highlights-row" style="margin-top:2.5rem; grid-template-columns: repeat(3, 1fr);">
+      <div class="highlight-card">
+        <div class="big-num"><i class="fas fa-stream" style="font-size:1.8rem;"></i></div>
+        <div class="big-label" style="font-size:0.95rem; font-weight:700; color:var(--text-dark); margin-top:0.6rem;">Multiple Interaction Modes</div>
+        <div class="big-label" style="margin-top:0.4rem;">Supports real-time QA, proactive response, and continuous observation in a unified end-to-end framework</div>
+      </div>
+      <div class="highlight-card">
+        <div class="big-num"><i class="fas fa-trophy" style="font-size:1.8rem;"></i></div>
+        <div class="big-label" style="font-size:0.95rem; font-weight:700; color:var(--text-dark); margin-top:0.6rem;">SOTA on Streaming Benchmarks</div>
+        <div class="big-label" style="margin-top:0.4rem;">73.1% on StreamingBench · 65.3% on OVO-Bench · 25.4% on OmniMMI</div>
+      </div>
+      <div class="highlight-card">
+        <div class="big-num"><i class="fab fa-github" style="font-size:1.8rem;"></i></div>
+        <div class="big-label" style="font-size:0.95rem; font-weight:700; color:var(--text-dark); margin-top:0.6rem;">Fully Open Source</div>
+        <div class="big-label" style="margin-top:0.4rem;">Model weights and demo deployment code are publicly available on GitHub and HuggingFace</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── METHOD ─── -->
+<div style="background:#fff;" id="method">
+  <div class="content-section">
+    <h2 class="section-title">Method</h2>
+
+    <p style="font-size:1rem; color:var(--text-mid); margin-bottom:2rem;">
+      AURA is built around four co-designed components spanning context management, data construction,
+      training, and deployment, enabling stable long-horizon streaming interaction from a unified model.
+    </p>
+
+    <!-- ── 1. Context Management ── -->
+    <h3 class="subsection-title">1&nbsp;&nbsp;Interactive Video Stream Context Management</h3>
+    <p style="font-size:0.97rem; color:var(--text-mid); margin-bottom:1.2rem;">
+      Streaming video and interaction history grow without bound, yet the LLM context window is finite.
+      AURA addresses this with a <b>dual sliding-window strategy</b>: a video window retaining the most
+      recent <i>N</i> seconds of frames, and a separate QA window preserving the last <i>M</i> question–answer
+      groups. Video chunks are organized in a <b>chunk-wise conversational format</b> where the model
+      either produces a response or emits a special <code>&lt;|silent|&gt;</code> token at each time step,
+      enabling asynchronous, always-on interaction without explicit user triggers.
+    </p>
+
+    <div class="fig-container">
+      <img src="static/images/3_context_management_2.png" alt="Figure 1: Interactive video stream context management overview" class="fig-embed">
+      <p class="fig-caption">
+        <b>Figure 1.</b> Overview of the Interactive Video Stream Context Management mechanism.
+        A dual sliding-window strategy manages the video stream (window size <i>N</i>) and the QA
+        interaction history (window size <i>M</i>) jointly, keeping the total context bounded while
+        preserving key historical information.
+      </p>
+    </div>
+
+    <!-- QA types -->
+    <p style="font-size:0.97rem; color:var(--text-mid); margin-bottom:1rem;">
+      Based on this mechanism, AURA defines three streaming QA interaction types:
+    </p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h4><i class="fas fa-bolt"></i>&nbsp; Real-Time QA</h4>
+        <p>The model produces a single immediate response grounded in the currently available or
+           previously observed visual context.</p>
+      </div>
+      <div class="feature-card">
+        <h4><i class="fas fa-clock"></i>&nbsp; Proactive QA</h4>
+        <p>The model stays silent after receiving a query and generates a response only after
+           sufficient visual evidence has accumulated in the stream.</p>
+      </div>
+      <div class="feature-card" style="grid-column: 1 / -1;">
+        <h4><i class="fas fa-sync-alt"></i>&nbsp; Multi-Response QA</h4>
+        <p>For queries about ongoing events, the model continuously monitors and generates multiple
+           responses over time as new visual information becomes available — without repeated user input.</p>
+      </div>
+    </div>
+
+    <div class="fig-container" style="margin-top:2rem;">
+      <img src="static/images/3_qa_examples_2.png" alt="Figure 2: Examples of streaming QA interaction types" class="fig-embed">
+      <p class="fig-caption">
+        <b>Figure 2.</b> Examples of the three streaming QA interaction types. Real-Time QA responds
+        immediately; Proactive QA waits for sufficient evidence; Multi-Response QA tracks evolving events
+        and produces multiple responses over time.
+      </p>
+    </div>
+
+    <!-- ── 2. Data Engine ── -->
+    <h3 class="subsection-title">2&nbsp;&nbsp;Coarse-to-Fine Streaming Data Engine</h3>
+    <p style="font-size:0.97rem; color:var(--text-mid); margin-bottom:1.2rem;">
+      Training data for all three QA types is generated via a systematic five-stage pipeline.
+      Starting from diverse internet videos, the pipeline synthesizes, refines, structures, and
+      verifies streaming QA samples, producing approximately <b>115k streaming video QA samples</b>
+      (~1.04B tokens) covering a wide range of video domains and interaction patterns.
+    </p>
+
+    <div class="fig-container">
+      <img src="static/images/4_Data_pipeline_2.png" alt="Figure 3: Coarse-to-fine streaming data engine pipeline" class="fig-embed">
+      <p class="fig-caption">
+        <b>Figure 3.</b> The Coarse-to-Fine Streaming Data Engine. The five stages are:
+        (1) Video Preparation, (2) QA Synthesis, (3) QA Refinement,
+        (4) Streaming Structuring, and (5) Quality Verification.
+      </p>
+    </div>
+
+    <div class="feature-grid data-pipeline-steps">
+      <div class="feature-card">
+        <span class="data-pipeline-step-number">1</span>
+        <h4>Video Preparation</h4>
+        <p>Diverse public videos are standardized by resampling to 2 FPS and re-encoding in H.264 for stable, consistent streaming input.</p>
+      </div>
+      <div class="feature-card">
+        <span class="data-pipeline-step-number">2</span>
+        <h4>QA Synthesis</h4>
+        <p>An MLLM performs scene-aware analysis and generates timestamped candidate QA pairs for Real-Time, Proactive, and Multi-Response settings.</p>
+      </div>
+      <div class="feature-card">
+        <span class="data-pipeline-step-number">3</span>
+        <h4>QA Refinement</h4>
+        <p>The synthesized QA is diversified by expanding question difficulty for Real-Time QA and rewriting phrasings for Proactive and Multi-Response QA.</p>
+      </div>
+      <div class="feature-card">
+        <span class="data-pipeline-step-number">4</span>
+        <h4>Streaming Structuring</h4>
+        <p>Timestamped QA sequences are unrolled into chunk-wise sliding-window training samples that match the streaming context management format.</p>
+      </div>
+      <div class="feature-card">
+        <span class="data-pipeline-step-number">5</span>
+        <h4>Quality Verification</h4>
+        <p>A judge model filters samples whose target answers are not sufficiently grounded in the retained visual context and QA history.</p>
+      </div>
+    </div>
+
+    <!-- ── 3. Training ── -->
+    <h3 class="subsection-title">3&nbsp;&nbsp;Silent-Speech Balanced Loss</h3>
+    <p style="font-size:0.97rem; color:var(--text-mid); margin-bottom:1.2rem;">
+      In streaming data, the <code>&lt;|silent|&gt;</code> token appears far more frequently than
+      actual responses, creating a severe class imbalance. A standard cross-entropy loss would bias
+      the model to stay silent at all times. AURA introduces a <b>Silent-Speech Balanced Loss</b>
+      that (1) applies supervision only to silent assistant messages and the last non-silent
+      response in each training sample, and (2) down-weights silent tokens by the inverse imbalance
+      ratio so that both signal types contribute comparably. This prevents over-silence and substantially
+      improves proactive response capability.
+    </p>
+
+    <!-- ── 4. Inference ── -->
+    <h3 class="subsection-title">4&nbsp;&nbsp;Real-Time Streaming Inference Framework</h3>
+    <p style="font-size:0.97rem; color:var(--text-mid); margin-bottom:1.2rem;">
+      To support real-time deployment, AURA is integrated with ASR and TTS modules in an
+      asynchronous end-to-end pipeline. A key efficiency challenge is that standard FIFO context
+      truncation invalidates the KV cache at every step. AURA solves this with a floating-window
+      strategy: instead of removing one chunk at a time, batches of <i>N'</i> chunks are removed
+      together so that the context prefix stays stable across <i>N'</i> steps, enabling aggressive
+      prefix KV-cache reuse and dramatically reducing TTFT.
+    </p>
+
+    <div class="fig-container">
+      <img src="static/images/5_inference_2.png" alt="Figure 4: End-to-end real-time inference system" class="fig-embed">
+      <p class="fig-caption">
+        <b>Figure 4.</b> End-to-end real-time inference system. Video frames and user speech are
+        captured simultaneously; ASR, the AURA main model, and TTS operate asynchronously to
+        minimize perceived latency.
+      </p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── DEMO ─── -->
+<div class="full-width-shaded" id="demo">
+  <div class="content-section">
+    <h2 class="section-title">Demo</h2>
+    <p style="font-size:1rem; color:var(--text-mid); margin-bottom:0.5rem;">
+      The following demos showcase AURA's real-time streaming interaction capabilities,
+      including proactive alerting, multi-turn tracking, and real-time QA — across English and Chinese.
+      Each demo runs at 2 FPS with speech I/O.
+    </p>
+
+    <!-- English demos -->
+    <div class="demo-group-label">English Demos</div>
+    <div class="demo-grid">
+      <div class="demo-card">
+        <video controls preload="metadata">
+          <source src="demos/The pens on the desk.mp4" type="video/quicktime">
+          <source src="demos/The pens on the desk.mp4" type="video/mp4">
+        </video>
+        <div class="demo-label">&ldquo;The pens on the desk&rdquo;</div>
+      </div>
+      <div class="demo-card">
+        <video controls preload="metadata">
+          <source src="demos/Watch the kettle for me.mp4" type="video/quicktime">
+          <source src="demos/Watch the kettle for me.mp4" type="video/mp4">
+        </video>
+        <div class="demo-label">&ldquo;Watch the kettle for me&rdquo;</div>
+      </div>
+    </div>
+
+    <!-- Chinese demos -->
+    <div class="demo-group-label">中文 Demos</div>
+    <div class="demo-grid">
+      <div class="demo-card">
+        <video controls preload="metadata">
+          <source src="demos/史迪仔放在哪？.mp4" type="video/quicktime">
+          <source src="demos/史迪仔放在哪？.mp4" type="video/mp4">
+        </video>
+        <div class="demo-label">&ldquo;史迪仔放在哪？&rdquo;</div>
+      </div>
+      <div class="demo-card">
+        <video controls preload="metadata">
+          <source src="demos/小馋猫偷吃冻干.mp4" type="video/quicktime">
+          <source src="demos/小馋猫偷吃冻干.mp4" type="video/mp4">
+        </video>
+        <div class="demo-label">&ldquo;小馋猫偷吃冻干&rdquo;</div>
+      </div>
+      <div class="demo-card">
+        <video controls preload="metadata">
+          <source src="demos/工作时不准摸鱼.mp4" type="video/quicktime">
+          <source src="demos/工作时不准摸鱼.mp4" type="video/mp4">
+        </video>
+        <div class="demo-label">&ldquo;工作时不准摸鱼&rdquo;</div>
+      </div>
+      <div class="demo-card">
+        <video controls preload="metadata">
+          <source src="demos/帮我找找鼠标.mp4" type="video/quicktime">
+          <source src="demos/帮我找找鼠标.mp4" type="video/mp4">
+        </video>
+        <div class="demo-label">&ldquo;帮我找找鼠标&rdquo;</div>
+      </div>
+      <div class="demo-card">
+        <video controls preload="metadata">
+          <source src="demos/帮我盯着烧水壶.mp4" type="video/quicktime">
+          <source src="demos/帮我盯着烧水壶.mp4" type="video/mp4">
+        </video>
+        <div class="demo-label">&ldquo;帮我盯着烧水壶&rdquo;</div>
+      </div>
+      <div class="demo-card">
+        <video controls preload="metadata">
+          <source src="demos/我刚才关灯了吗.mp4" type="video/quicktime">
+          <source src="demos/我刚才关灯了吗.mp4" type="video/mp4">
+        </video>
+        <div class="demo-label">&ldquo;我刚才关灯了吗&rdquo;</div>
+      </div>
+      <div class="demo-card">
+        <video controls preload="metadata">
+          <source src="demos/桌面上的笔.mp4" type="video/quicktime">
+          <source src="demos/桌面上的笔.mp4" type="video/mp4">
+        </video>
+        <div class="demo-label">&ldquo;桌面上的笔&rdquo;</div>
+      </div>
+      <div class="demo-card">
+        <video controls preload="metadata">
+          <source src="demos/绿灯才能过马路哦.mp4" type="video/quicktime">
+          <source src="demos/绿灯才能过马路哦.mp4" type="video/mp4">
+        </video>
+        <div class="demo-label">&ldquo;绿灯才能过马路哦&rdquo;</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── BIBTEX ─── -->
+<div style="background:#fff;" id="bibtex">
+  <div class="content-section">
+    <h2 class="section-title">BibTeX</h2>
+    <div class="bibtex-wrap">
+      <pre class="bibtex-code" id="bibtex-content">@article{lu2026aura,
+  title   = {AURA: Always-On Understanding and Real-Time Assistance via Video Streams},
+  author  = {Lu, Xudong and Bo, Yang and Chen, Jinpeng and Li, Shuhan and Guo, Xintong and
+             Guan, Huankang and Liu, Fang and Xu, Dunyuan and Sun, Peiwen and Sun, Heyang and
+             Liu, Rui and Li, Hongsheng},
+  journal = {arXiv preprint},
+  year    = {2026}
+}</pre>
+      <button class="copy-btn" onclick="copyBibtex()" id="copy-btn-text">
+        <i class="fas fa-copy"></i> Copy
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── FOOTER ─── -->
+<footer class="site-footer">
+  <p>
+    This page was built using the
+    <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>
+    adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+  </p>
+  <p style="margin-top:0.5rem;">
+    Licensed under a
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+      Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+  </p>
+</footer>
+
+<!-- Scroll to top -->
+<button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Scroll to top">
+  <i class="fas fa-chevron-up"></i>
+</button>
+
+<script>
+  window.addEventListener('scroll', function() {
+    var btn = document.getElementById('scroll-top');
+    if (window.scrollY > 400) btn.classList.add('visible');
+    else btn.classList.remove('visible');
+  });
+
+  function copyBibtex() {
+    var text = document.getElementById('bibtex-content').innerText;
+    navigator.clipboard.writeText(text).then(function() {
+      var btn = document.getElementById('copy-btn-text');
+      btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      setTimeout(function() {
+        btn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+      }, 2000);
+    });
+  }
+</script>
+
+</body>
+</html>
