@@ -677,13 +677,14 @@
     <!-- ── 3. Training ── -->
     <h3 class="subsection-title">3&nbsp;&nbsp;Silent-Speech Balanced Loss</h3>
     <p style="font-size:0.97rem; color:var(--text-mid); margin-bottom:1.2rem;">
-      In streaming data, the <code>&lt;|silent|&gt;</code> token appears far more frequently than
-      actual responses, creating a severe class imbalance. A standard cross-entropy loss would bias
-      the model to stay silent at all times. AURA introduces a <b>Silent-Speech Balanced Loss</b>
-      that (1) applies supervision only to silent assistant messages and the last non-silent
-      response in each training sample, and (2) down-weights silent tokens by the inverse imbalance
-      ratio so that both signal types contribute comparably. This prevents over-silence and substantially
-      improves proactive response capability.
+      Training streaming data with standard cross-entropy poses two challenges:
+      (1)&nbsp;due to sliding-window truncation, only the <b>last</b> non-silent assistant message in
+      each sample is guaranteed to have sufficient visual evidence — supervising earlier ones risks
+      hallucination; (2)&nbsp;<code>&lt;|silent|&gt;</code> tokens vastly outnumber real responses,
+      biasing the model toward perpetual silence.
+      The <b>Silent-Speech Balanced Loss</b> tackles both: it restricts supervision to silent
+      messages and the last non-silent message, and down-weights silent tokens by the inverse
+      imbalance ratio so that silence and speech contribute comparably to optimization.
     </p>
 
     <!-- ── 4. Inference ── -->
